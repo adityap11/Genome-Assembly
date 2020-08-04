@@ -78,6 +78,27 @@ class PuzzleAssembly:
                 if None != i:
                     solved.add(i)
         unsolved = [i for i in range(len(blocks)) if not i in solved]
+
+        _idx3 = list(zip(sum([[i]*(n-2) for i in range(1, n-1)], []), sum([list(range(1, n-1)) for _ in range(n-2)], [])))
+        f = lambda x: [(x[0]-1, x[1], 2, 0), (x[0], x[1]-1, 3, 1), (x[0]+1, x[1], 0, 2), (x[0], x[1]+1, 1, 3)]
+        idx3 = [f(x) for x in _idx3]
+        
+        for p in permutations(unsolved):
+            trial = deepcopy(ans)
+            for i in range(len(p)):
+                trial[_idx3[i][0]][_idx3[i][1]] = p[i]
+            isCorrect = True
+            for i in range(len(p)):
+                for j in range(4):
+                    if blocks[trial[idx3[i][j][0]][idx3[i][j][1]]][idx3[i][j][2]] != blocks[p[i]][idx3[i][j][3]]:
+                        isCorrect = False
+                        break
+                if not isCorrect:
+                    break
+            if isCorrect:
+                ans = trial
+                break
+        return ans
     
     def printResult(self, ans, block):
         for i, a in enumerate(ans):
